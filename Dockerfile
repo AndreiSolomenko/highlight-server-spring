@@ -11,18 +11,17 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
-# Копіюємо мовні файли tessdata у відповідну директорію Tesseract
-# Якщо у вас є папка tessdata у проєкті, копіюємо її
-COPY tessdata /usr/share/tesseract-ocr/4.00/tessdata
-
-# Встановлюємо змінну середовища для tessdata
-ENV TESSDATA_PREFIX=/usr/share/tesseract-ocr/4.00/
-
 # Копіюємо зібраний jar файл
 COPY --from=build /target/highlight-server-spring-0.0.1-SNAPSHOT.jar highlightserverspring.jar
+
+# Створюємо директорію для tessdata
+RUN mkdir -p /usr/share/tesseract-ocr/4.00/tessdata
+
+# Копіюємо tessdata з JAR в контейнер
+COPY --from=build /target/classes/tessdata /usr/share/tesseract-ocr/4.00/tessdata
 
 # Відкриваємо порт
 EXPOSE 8080
 
 # Встановлюємо точку входу
-ENTRYPOINT ["java", "-jar", "highlightserverspring.jar"]
+ENTRYPOINT ["java","-jar","highlightserverspring.jar"]
