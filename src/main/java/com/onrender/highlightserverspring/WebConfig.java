@@ -11,8 +11,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")  // Дозволяє доступ до всіх API шляхів
-                .allowedOrigins("http://localhost:3000")  // Дозволяє доступ тільки з порту 3000 (React)
+                .allowedOrigins("*")  // Дозволяє доступ з будь-якого джерела
                 .allowedMethods("GET", "POST", "PUT", "DELETE")  // Дозволяє методи GET, POST, PUT, DELETE
-                .allowedHeaders("*");  // Дозволяє всі заголовки
+                .allowedHeaders("*")  // Дозволяє всі заголовки
+                .allowCredentials(true);  // Дозволяє передачу куків
     }
 }
