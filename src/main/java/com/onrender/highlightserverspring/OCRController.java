@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -24,15 +25,15 @@ public class OCRController {
             ITesseract instance = new Tesseract();
 
             // Встановлюємо шлях до tessdata
-            String tessDataPath = getClass().getClassLoader().getResource("tessdata") != null ?
-                    getClass().getClassLoader().getResource("tessdata").getPath() : null;
+            String tessDataPath = "/usr/share/tesseract-ocr/4.00/tessdata";
 
-            // Перевіряємо, чи існує ресурс
-            if (tessDataPath == null) {
-                throw new RuntimeException("Не вдалося знайти директорію 'tessdata' у ресурсах.");
+            // Перевіряємо, чи існує директорія tessdata
+            File tessDataDir = new File(tessDataPath);
+            if (!tessDataDir.exists() || !tessDataDir.isDirectory()) {
+                throw new RuntimeException("Не вдалося знайти директорію 'tessdata'.");
             }
 
-            // Встановлюємо шлях до tessdata
+            // Встановлюємо datapath для Tesseract
             instance.setDatapath(tessDataPath);
 
             // Встановлюємо мову для розпізнавання
