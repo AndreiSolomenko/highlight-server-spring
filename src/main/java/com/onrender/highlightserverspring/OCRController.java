@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class OCRController {
 
     @PostMapping("/api/process-image")
