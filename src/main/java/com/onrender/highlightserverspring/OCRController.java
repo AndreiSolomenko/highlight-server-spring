@@ -67,4 +67,10 @@ public class OCRController {
             this.text = text;
         }
     }
+
+
+    @GetMapping("/api/rising")
+    public String rising() {
+        return "in working condition";
+    }
 }
