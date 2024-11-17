@@ -1,12 +1,10 @@
 package com.onrender.highlightserverspring;
 
-import net.sourceforge.tess4j.ITesseract;
-import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -18,35 +16,20 @@ public class OCRController {
     @PostMapping("/api/process-image")
     public Response processImage(@RequestParam("image") MultipartFile image, @RequestParam("language") String language) {
         try {
-            // Перетворюємо MultipartFile в BufferedImage
-            BufferedImage bufferedImage = ImageIO.read(image.getInputStream());
 
-            // Створюємо екземпляр Tesseract
+            BufferedImage bufferedImage = ImageIO.read(image.getInputStream());
             ITesseract instance = new Tesseract();
 
-            // Встановлюємо шлях до tessdata
-            String tessDataPath = "/usr/share/tesseract-ocr/4.00/tessdata";
+            instance.setDatapath("src/main/resources/tessdata");
 
-            // Перевіряємо, чи існує директорія tessdata
-            File tessDataDir = new File(tessDataPath);
-            if (!tessDataDir.exists() || !tessDataDir.isDirectory()) {
-                throw new RuntimeException("Не вдалося знайти директорію 'tessdata'.");
-            }
-
-            // Встановлюємо datapath для Tesseract
-            instance.setDatapath(tessDataPath);
-
-            // Встановлюємо мову для розпізнавання
             instance.setLanguage(language);
 
-            // Виконуємо розпізнавання тексту
             String resultText = instance.doOCR(bufferedImage);
 
-            // Повертаємо результат як JSON
             return new Response(resultText);
         } catch (IOException e) {
             throw new RuntimeException("Помилка при обробці зображення", e);
-        } catch (Exception e) {
+        } catch (TesseractException e) {
             throw new RuntimeException("Помилка OCR", e);
         }
     }
@@ -68,9 +51,4 @@ public class OCRController {
         }
     }
 
-
-    @GetMapping("/api/rising")
-    public String rising() {
-        return "in working condition";
-    }
 }
