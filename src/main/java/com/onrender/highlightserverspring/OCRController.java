@@ -15,17 +15,26 @@ public class OCRController {
     @PostMapping("/api/process-image")
     public String processImage(@RequestParam("image") MultipartFile image, @RequestParam("language") String language) {
         try {
+
+            if (image.isEmpty()) {
+                throw new IllegalArgumentException("No image loaded.");
+            }
+            if (language == null || language.trim().isEmpty()) {
+                throw new IllegalArgumentException("The language is not specified.");
+            }
+
             BufferedImage bufferedImage = ImageIO.read(image.getInputStream());
             ITesseract instance = new Tesseract();
 
-            instance.setDatapath("src/main/resources/tessdata");
+            instance.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata");
             instance.setLanguage(language);
 
             return instance.doOCR(bufferedImage);
+
         } catch (IOException e) {
-            throw new RuntimeException("Помилка при обробці зображення", e);
+            throw new RuntimeException("Error occurred while processing the image", e);
         } catch (TesseractException e) {
-            throw new RuntimeException("Помилка OCR", e);
+            throw new RuntimeException("OCR error", e);
         }
     }
 }
