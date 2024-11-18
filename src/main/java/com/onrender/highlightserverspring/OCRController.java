@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.imageio.ImageIO;
 
 @RestController
@@ -13,7 +15,7 @@ import javax.imageio.ImageIO;
 public class OCRController {
 
     @PostMapping("/api/process-image")
-    public String processImage(@RequestParam("image") MultipartFile image, @RequestParam("language") String language) {
+    public Map<String, String> processImage(@RequestParam("image") MultipartFile image, @RequestParam("language") String language) {
         try {
 
             if (image.isEmpty()) {
@@ -29,7 +31,11 @@ public class OCRController {
             instance.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata");
             instance.setLanguage(language);
 
-            return instance.doOCR(bufferedImage);
+            String recognizedText = instance.doOCR(bufferedImage);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("text", recognizedText);
+            return response;
 
         } catch (IOException e) {
             throw new RuntimeException("Error occurred while processing the image", e);
