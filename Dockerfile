@@ -14,6 +14,10 @@ RUN apt-get update && apt-get install -y \
 # Копіюємо зібраний jar файл
 COPY --from=build /target/highlight-server-spring-0.0.1-SNAPSHOT.jar highlightserverspring.jar
 
+RUN mkdir -p /usr/share/tesseract-ocr/4.00/tessdata
+
+COPY --from=build /target/classes/tessdata /usr/share/tesseract-ocr/4.00/tessdata
+
 # Відкриваємо порт
 EXPOSE 8080
 
